@@ -1,20 +1,42 @@
 package com.teamhelper.chatservice.controller;
 
-import com.teamhelper.chatservice.dto.Greeting;
-import com.teamhelper.chatservice.dto.HelloMessage;
+import com.teamhelper.chatservice.dto.ChatMessage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.util.HtmlUtils;
 
 @Controller
 public class ChatController {
 
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public Greeting greeting(HelloMessage message) throws Exception{
-        Thread.sleep(1000);
-        return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
+    private final SimpMessageSendingOperations messagingTemplate;
+
+    @Autowired
+    public ChatController(SimpMessageSendingOperations messagingTemplate){
+        this.messagingTemplate = messagingTemplate;
+    }
+
+    @MessageMapping("/chat/message")
+    public void message(ChatMessage message) {
+        if (ChatMessage.MessageType.ENTER.equals(message.getType()))
+            message.setMessage(message.getSender() + "님이 입장하셨습니다.");
+        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
+    }
+
+    @GetMapping("/chat/room")
+    public String rooms(Model model){
+        return "/chat/room";
+    }
+
+    @GetMapping("/chat/room/enter/{roomId}")
+    public String roomDetail(Model model, @PathVariable String roomId){
+        model.addAttribute("roomId", roomId);
+        return "/chat/roomdetail";
     }
 
 }
