@@ -12,6 +12,11 @@ public class ExceptionHandlingController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(IllegalArgumentException.class)
     public String noUserData(IllegalArgumentException exception){
-        return "NoId";
+        return exception.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String notAllow(Exception exception){
+        return exception.getMessage();
     }
 }
