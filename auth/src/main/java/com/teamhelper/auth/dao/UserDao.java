@@ -8,6 +8,9 @@ import java.util.List;
 
 @Mapper
 public interface UserDao {
-    User selectUserByIdPw(@Param("id") String id, @Param("pw") String pw);
-    int insertUser(@Param("id") String id, @Param("pw") String pw, @Param("name") String name);
+    User selectUserByIdPw(String id, String pw);
+    int updateUser(User user);
+    int insertUser(User user);
+    int selectExistId(@Param("id") String id);
+
 }

@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionHandlingController {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public String noUserData(IllegalArgumentException exception){
+    public String modifyFail(IllegalArgumentException exception){
         return exception.getMessage();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(IllegalAccessException.class)
     public String notAllow(Exception exception){
         return exception.getMessage();
     }

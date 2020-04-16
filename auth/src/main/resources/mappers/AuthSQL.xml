@@ -15,15 +15,35 @@
 			AND	password = #{pw}
 	</select>
 
-	<insert id="insertUser" parameterType="User">
+	<insert id="insertUser" parameterType="map">
 		INSERT INTO
 			user(
 				user_id,
 				password,
 				user_name)
 		VALUES (
-			#{id},
-			#{pw},
-			#{name})
+			#{userId},
+			#{password},
+			#{userName})
 	</insert>
+
+	<update id="updateUser" parameterType="map">
+		UPDATE
+			user
+		SET
+			password = #{password} AND
+			userName=#{userName}
+		WHERE
+			user_id = #{userId}
+	</update>
+
+	<select id="selectExistId" parameterType="map" resultType="_int">
+		SELECT
+			COUNT(user_id)
+		FROM
+			user
+		WHERE
+			user_id = #{id}
+	</select>
+
 </mapper>

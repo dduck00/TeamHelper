@@ -2,6 +2,7 @@ package com.teamhelper.auth.dto;
 
 import org.apache.ibatis.type.Alias;
 
+@Alias("User")
 public class User {
     private String userId;
     private String password;
@@ -14,7 +15,6 @@ public class User {
     }
 
     public User(){
-
     }
 
     public String getUserId() {
@@ -40,4 +40,5 @@ public class User {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
 }
