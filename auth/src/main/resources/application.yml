@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: AUTH-SERVICE
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    password: 928
+    url: jdbc:mysql://localhost:3306/teamhelper?useSSL=false
+    username: root
+
+mybatis:
+  mapper-locations: mappers/*.xml
+  type-aliases-package: com.teamhelper.auth.dto
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    enabled: true
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+

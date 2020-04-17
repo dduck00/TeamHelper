@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ZUUL-SERVICE
+
+zuul:
+  ignored-services: '*'
+  routes:
+    auth-service:
+      path: /auth/**
+      service-id: AUTH-SERVICE
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    enabled: true
