@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 @RestController
+@RequestMapping("/auth/")
 public class UserRestController {
 
     private final UserService userService;
