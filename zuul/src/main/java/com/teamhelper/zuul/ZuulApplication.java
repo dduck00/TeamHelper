@@ -20,11 +20,15 @@ public class ZuulApplication {
 
 
     @Bean
-    public RouteLocator myRoutes(RouteLocatorBuilder builder){
+    public RouteLocator myRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route(p -> p
-                        .path("/auth/**")
-                        .filters(f -> f.addRequestHeader("Hello", "World"))
+                        .path("/**")
+                        .filters(f -> f.rewritePath("^\\/[0-9a-zA-Z\\/]*$", "/login"))
+                        .uri("lb://AUTH-SERVICE")
+                        .predicate(pre -> pre.getRequest().getCookies().isEmpty()))
+                .route(p->p
+                        .path("/auth")
                         .uri("lb://AUTH-SERVICE"))
                 .build();
     }
