@@ -1,6 +1,7 @@
 package com.teamhelper.chatservice.controller;
 
 import com.teamhelper.chatservice.dto.ChatMessage;
+import com.teamhelper.chatservice.feign.ViewFeign;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -20,15 +21,17 @@ import javax.servlet.http.HttpServletRequest;
 public class ChatController {
 
     private final SimpMessageSendingOperations messagingTemplate;
+    private final ViewFeign viewFeign;
 
     @Autowired
-    public ChatController(SimpMessageSendingOperations messagingTemplate){
+    public ChatController(SimpMessageSendingOperations messagingTemplate, ViewFeign viewFeign){
         this.messagingTemplate = messagingTemplate;
+        this.viewFeign = viewFeign;
     }
 
     @GetMapping("/")
-    public String mainPage(HttpServletRequest request){
-        return "index";
+    public ModelAndView mainPage(){
+        return viewFeign.chatView();
     }
 
     @MessageMapping("/message")

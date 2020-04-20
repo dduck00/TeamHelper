@@ -27,9 +27,6 @@ public class ZuulApplication {
                         .filters(f -> f.rewritePath("^\\/[0-9a-zA-Z\\/]*$", "/login"))
                         .uri("lb://AUTH-SERVICE")
                         .predicate(pre -> pre.getRequest().getCookies().isEmpty()))
-                .route(p ->p
-                        .path("/resources/**", "/webjars/**")
-                        .uri("lb://RESOURCE-SERVICE"))
                 .route(p -> p
                         .path("/auth/**")
                         .uri("lb://AUTH-SERVICE"))
