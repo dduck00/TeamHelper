@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/chat/")
+@RequestMapping("/chat")
 public class ChatController {
 
     private final SimpMessageSendingOperations messagingTemplate;

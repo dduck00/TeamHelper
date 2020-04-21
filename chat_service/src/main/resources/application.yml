@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: CHAT-SERVICE
+    name: WS-SERVICE
 
 eureka:
   instance:
