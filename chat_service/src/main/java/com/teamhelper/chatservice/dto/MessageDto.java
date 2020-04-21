@@ -1,6 +1,6 @@
 package com.teamhelper.chatservice.dto;
 
-public class ChatMessage {
+public class MessageDto {
     public enum MessageType{
         ENTER, TALK
     }

@@ -4,6 +4,13 @@ server:
 spring:
   application:
     name: WS-SERVICE
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  freemarker:
+    cache: false
 
 eureka:
   instance:
