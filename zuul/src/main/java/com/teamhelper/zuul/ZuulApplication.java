@@ -14,6 +14,20 @@ import org.springframework.context.annotation.Bean;
 @EnableDiscoveryClient
 public class ZuulApplication {
 
+    private final String[] resourceUris = {
+            "/resources/**",
+            "/webjars/**",
+            "/resources/**",
+            "/"
+    };
+
+    private final String[] webSocketUris = {
+            "/ws/connect/**",
+            "/sub/group/**",
+            "/pub/get/msg/**"
+    };
+
+
     public static void main(String[] args) {
         SpringApplication.run(ZuulApplication.class, args);
     }
@@ -22,20 +36,20 @@ public class ZuulApplication {
     @Bean
     public RouteLocator myRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
+//                .route(p -> p
+//                        .path("/**")
+//                        .filters(f -> f.rewritePath("^\\/[0-9a-zA-Z\\/]*$", "/login"))
+//                        .uri("lb://AUTH-SERVICE")
+//                        .predicate(pre -> pre.getRequest().getCookies().isEmpty()))
                 .route(p -> p
-                        .path("/**")
-                        .filters(f -> f.rewritePath("^\\/[0-9a-zA-Z\\/]*$", "/login"))
-                        .uri("lb://AUTH-SERVICE")
-                        .predicate(pre -> pre.getRequest().getCookies().isEmpty()))
-                .route(p ->p
-                        .path("/resources/**", "/webjars/**")
-                        .uri("lb://RESOURCE-SERVICE"))
-                .route(p -> p
-                        .path("/auth/**")
+                        .path("/api/auth/**")
                         .uri("lb://AUTH-SERVICE"))
                 .route(p -> p
-                        .path("/chat/**")
-                        .uri("lb://CHAT-SERVICE"))
+                        .path(webSocketUris)
+                        .uri("lb://WS-SERVICE"))
+                .route(p ->p
+                        .path(resourceUris)
+                        .uri("lb://RESOURCE-SERVICE"))
                 .build();
     }
 
