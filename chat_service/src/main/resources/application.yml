@@ -11,6 +11,9 @@ spring:
       enabled: false
   freemarker:
     cache: false
+  mvc:
+    static-path-pattern: /resources/**
+
 
 eureka:
   instance:
