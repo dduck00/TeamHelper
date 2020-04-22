@@ -4,11 +4,6 @@ server:
 spring:
   application:
     name: GATEWAY-SERVICE
-  cloud:
-    gateway:
-      filter:
-        secure-headers:
-          frame-options: SAMEORIGIN
 
 eureka:
   instance:
