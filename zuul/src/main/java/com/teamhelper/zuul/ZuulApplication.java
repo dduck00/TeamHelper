@@ -16,7 +16,6 @@ public class ZuulApplication {
     private final String[] resourceUris = {
             "/resources/**",
             "/webjars/**",
-            "/resources/**",
             "/"
     };
 
