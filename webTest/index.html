@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <title>Hello WebSocket</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    </noscript>
+    <label for="groupId">GROUP ID</label>
+    <input type="text" id="groupId" />
+    <button id="connectButton">connect</button>
+    <br>
+    <label for="message">MESSAGE</label>
+    <input type="text" id="message" />
+    <button id="sendButton">send</button>
+
+    <br> <canvas id="paper" style="border: 1px solid black;" width="1000px" height="1000px"></canvas>
+
+    <script>
+        const GROUP_ID = "1234";
+        const USER_ID = "sdf";
+    </script>
+    <script src="js/lib/jquery.min.js"></script>
+    <script src="js/lib/sockjs.min.js"></script>
+    <script src="js/lib/stomp.min.js"></script>
+    <script>
+        let stompClient;
+
+        function connect() {
+            const socket = new SockJS('http://localhost:9000/ws/connect');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, () => {
+                stompClient.subscribe(`/sub/group/${GROUP_ID}`, (meessage) => {
+                    JSON.parse(meessage.body);
+                });
+                send('ENTER', null);
+            });
+        }
+
+        function send(TYPE, MESSAGE) {
+            stompClient.send("/pub/get/msg", {}, JSON.stringify({ type: TYPE, roomId: GROUP_ID, sender: USER_ID, message: MESSAGE }));
+        }
+
+        $(function () {
+            $("#connectButton").click(() => {
+                connect();
+            });
+
+            $("#sendButton").click(() => {
+                send();
+            })
+            $('#paper').mousedown((e) => {
+                canvasInit(e);
+                $(e.currentTarget).mousemove(canvasMouseMoveEvent);
+            })
+            $('#paper').mouseup((e) => {
+                canvasContext = null;
+                $(e.currentTarget).off('mousemove');
+            })
+        });
+
+        let canvasContext;
+        function canvasMouseMoveEvent(event) {
+            let rect = document.querySelector('#paper').getBoundingClientRect();
+            let stroke = {
+                x : event.clientX - rect.left,
+                y : event.clientY - rect.top,
+                color : '#FFFF',
+                width : 0
+            };
+
+            send("TALK", "X : " + stroke.x+ " Y : " + stroke.y);
+            canvasContext.lineTo(stroke.x, stroke.y);
+            canvasContext.stroke();
+        }
+
+        function canvasInit(event){
+            canvasContext = event.currentTarget.getContext("2d");
+            let rect = document.querySelector('#paper').getBoundingClientRect();
+            canvasContext.moveTo(event.clientX - rect.left, event.clientY - rect.top);
+        }
+
+    </script>
+</body>
+
+</html>

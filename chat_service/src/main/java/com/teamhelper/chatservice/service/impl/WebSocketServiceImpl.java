@@ -5,11 +5,9 @@ import com.teamhelper.chatservice.dto.Group;
 import com.teamhelper.chatservice.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 public class WebSocketServiceImpl implements WebSocketService {

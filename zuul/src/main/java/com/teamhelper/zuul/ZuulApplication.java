@@ -22,8 +22,7 @@ public class ZuulApplication {
     private final String[] webSocketUris = {
             "/ws/connect/**",
             "/sub/group/**",
-            "/pub/get/msg/**",
-            "/ws"
+            "/pub/get/msg/**"
     };
 
 
