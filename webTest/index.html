@@ -18,70 +18,138 @@
 
     <br> <canvas id="paper" style="border: 1px solid black;" width="1000px" height="1000px"></canvas>
 
-    <script>
-        const GROUP_ID = "1234";
-        const USER_ID = "sdf";
-    </script>
     <script src="js/lib/jquery.min.js"></script>
     <script src="js/lib/sockjs.min.js"></script>
     <script src="js/lib/stomp.min.js"></script>
     <script>
+        const GROUP_ID = "1234";
+        const USER_ID = "sdf"; // TODO: test용 추후에 타임리프로 작성
+
+        class Pencil {
+            constructor(message) {
+                if (message === undefined) {
+                    this.x = 0;
+                    this.y = 0;
+                    this.color = "#ffffff";
+                    this.width = 1;
+                }
+                else {
+                    this.x = message.x;
+                    this.y = message.y;
+                    this.color = mesesage.color;
+                    this.width = message.width;
+                }
+            }
+
+            draw(message) {
+                message = JSON.parse(message);
+                canvasContext.moveTo(this.x, this.y);
+                canvasContext.lineTo(message.X, message.Y);
+                canvasContext.stroke();
+                this.x = message.x;
+                this.y = message.y;
+            }
+
+            drawStart(message) {
+                message = JSON.parse(message);
+                this.x = message.X;
+                this.y = message.Y;
+            }
+
+            toJson() {
+                return {
+                    x: this.x,
+                    y: this.y,
+                    color: this.color,
+                    width: this.width
+                };
+            }
+
+            setPosition(newX, newY){
+                this.x = newX;
+                this.y = newY;
+            }
+        }
+    </script>
+    <script>
+        let canvasContext = document.querySelector('#paper').getContext("2d");
+        let canvasRect = document.querySelector('#paper').getBoundingClientRect();
+
+        let users = new Map(); // 접속 유저 리스트, 커넥션 연결시, 리스트 최신화 예정
         let stompClient;
 
-        function connect() {
-            const socket = new SockJS('http://localhost:9000/ws/connect');
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, () => {
-                stompClient.subscribe(`/sub/group/${GROUP_ID}`, (meessage) => {
-                    JSON.parse(meessage.body);
-                });
-                send('ENTER', null);
-            });
-        }
-
-        function send(TYPE, MESSAGE) {
-            stompClient.send("/pub/get/msg", {}, JSON.stringify({ type: TYPE, roomId: GROUP_ID, sender: USER_ID, message: MESSAGE }));
-        }
 
         $(function () {
             $("#connectButton").click(() => {
                 connect();
+                setMouseEvent();
             });
 
             $("#sendButton").click(() => {
                 send();
             })
-            $('#paper').mousedown((e) => {
-                canvasInit(e);
-                $(e.currentTarget).mousemove(canvasMouseMoveEvent);
-            })
-            $('#paper').mouseup((e) => {
-                canvasContext = null;
-                $(e.currentTarget).off('mousemove');
-            })
         });
 
-        let canvasContext;
+        
+        function connect() {
+            const socket = new SockJS('http://localhost:9000/ws/connect');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, () => {
+                stompClient.subscribe(`/sub/group/${GROUP_ID}`, (dataFromServer) => {
+                    const DATA = JSON.parse(dataFromServer.body);
+                    if (DATA.sender === USER_ID)
+                        return;
+                    switch (DATA.type) {
+                        case "ENTER":
+                            users.set(DATA.sender, new Pencil());
+                            break;
+                        case "TALK":
+                            break;
+                        case "DRAW":
+                            users.get(DATA.sender).draw(DATA.message);
+                            break;
+                        case "DRAW_START":
+                            users.get(DATA.sender).drawStart(DATA.message);
+                            break;
+                    }
+                });
+                send('ENTER', null);
+            });
+        }
+
+
+        function send(TYPE, MESSAGE) {
+            stompClient.send("/pub/get/msg", {}, JSON.stringify({ type: TYPE, roomId: GROUP_ID, sender: USER_ID, message: MESSAGE }));
+        }
+
+
+        function setMouseEvent() {
+            $('#paper').mousedown((event) => {
+                users.get(USER_ID).setPosition(event.clientX, event.ClientY);
+                $(event.currentTarget).mousemove(canvasMouseMoveEvent);
+                send("DRAW_START", getMessage(event));
+            })
+            $('#paper').mouseup((e) => {
+                $(e.currentTarget).off('mousemove');
+            })
+        }
+
+
         function canvasMouseMoveEvent(event) {
-            let rect = document.querySelector('#paper').getBoundingClientRect();
-            let stroke = {
-                x : event.clientX - rect.left,
-                y : event.clientY - rect.top,
-                color : '#FFFF',
-                width : 0
-            };
-
-            send("TALK", "X : " + stroke.x+ " Y : " + stroke.y);
-            canvasContext.lineTo(stroke.x, stroke.y);
-            canvasContext.stroke();
+            const sendMessage = getMessage(event);
+            users.get(USER_ID).draw(sendMessage);
+            send("DRAW", sendMessage);
         }
 
-        function canvasInit(event){
-            canvasContext = event.currentTarget.getContext("2d");
-            let rect = document.querySelector('#paper').getBoundingClientRect();
-            canvasContext.moveTo(event.clientX - rect.left, event.clientY - rect.top);
+        
+        function getMessage(event) {
+            return `{
+                        "X":"${event.clientX - canvasRect.left}",
+                        "Y":"${event.clientY - canvasRect.top}",
+                        "COLOR":"${"#FFFF"}",
+                        "WIDTH":"${0}"
+                    }`;
         }
-
     </script>
 </body>
 
