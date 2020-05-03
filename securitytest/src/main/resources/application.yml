@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    username: root
+    password: 0928
+    url: jdbc:mysql://localhost:3306/reservationservice?useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+
+mybatis:
+  type-aliases-package: com.example.securitytest.dto
+  mapper-locations: mappers/*.xml
