@@ -47,8 +47,7 @@ public class UserController {
             throw new IllegalArgumentException("Wrong Password");
         }
 
-        return jwtTokenProvider.createToken(user.getUsername(), user.getRoles());
-
+        return jwtTokenProvider.createToken(user.getId() + "/" + user.getUsername(), user.getRoles());
     }
 
 }

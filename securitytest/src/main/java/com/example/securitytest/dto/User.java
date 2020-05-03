@@ -22,7 +22,12 @@ public class User implements UserDetails {
 
     }
 
-    public User(String email, String password, List<String> roles) {
+    public User(String id, String email) {
+        this.id = Long.parseLong(id);
+        this.email = email;
+    }
+
+    public User( String email, String password, List<String> roles) {
         this.email = email;
         this.password = password;
         this.roles = roles;

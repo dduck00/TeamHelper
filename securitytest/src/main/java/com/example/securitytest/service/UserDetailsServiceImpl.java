@@ -17,8 +17,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         this.userDao = userDao;
     }
 
-
-
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         return null;
