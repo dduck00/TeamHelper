@@ -1,9 +1,7 @@
 package com.example.securitytest.controller;
 
-import com.example.securitytest.dao.UserDao;
 import com.example.securitytest.dto.User;
 import com.example.securitytest.jwt.JwtTokenProvider;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,13 +16,11 @@ public class UserController {
 
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserDao userDao;
 
     @Autowired
-    public UserController(PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, UserDao userDao) {
+    public UserController(PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.userDao = userDao;
     }
 
     @PostMapping("/join")
@@ -39,14 +35,7 @@ public class UserController {
         String email = body.get("email");
         String password = body.get("password");
 
-        User user = userDao.selectUserByEmail(email);
-        if (ObjectUtils.isEmpty(user)) {
-            new IllegalArgumentException("Wrong Email");
-        }
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("Wrong Password");
-        }
-
+        User user = new User("1111", "duck@naver.com");
         return jwtTokenProvider.createToken(user.getId() + "/" + user.getUsername(), user.getRoles());
     }
 
