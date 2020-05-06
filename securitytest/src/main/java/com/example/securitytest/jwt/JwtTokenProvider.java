@@ -21,7 +21,7 @@ import java.util.List;
 @Component
 public class JwtTokenProvider {
 
-    private static String secretKey = "webfirewood";
+    private static String secretKey = "DUCK";
 
     // 토큰 유효시간 30분
     private long tokenValidTime = 30 * 60 * 1000L;
@@ -37,7 +37,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(userPk);
         Date now = new Date();
         return Jwts.builder()
-                .claim("id", "3") // 정보 저장
+                .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
                 .setExpiration(new Date(now.getTime() + tokenValidTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
