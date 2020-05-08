@@ -46,12 +46,10 @@ public class ZuulApplication {
         return builder.routes()
                 .route(p -> p
                         .path("/**")
-                        .filters(f -> f.rewritePath("^\\/[0-9a-zA-Z\\/]*$", "/login"))
-                        .uri("http://naver.com")
+                        .filters(f -> f.rewritePath("^\\/[0-9a-zA-Z\\/]*$", "/"))
+                        .uri("lb://AUTH-SERVICE")
                         .predicate(pre -> {
-
                             Map<String, String> token = JWT_TOKEN.parseHeader(pre.getRequest());
-
                             if (token == null) {
                                 return true;
                             }

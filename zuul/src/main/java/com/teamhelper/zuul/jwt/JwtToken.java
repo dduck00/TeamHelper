@@ -3,7 +3,7 @@ package com.teamhelper.zuul.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import org.eclipse.jgit.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ public class JwtToken {
     public Map<String, String> parseHeader(ServerHttpRequest request) {
         String token = resolveToken(request);
 
-        if (StringUtils.isEmptyOrNull(token)
+        if (StringUtils.isEmpty(token)
                 || validateToken(token) == false) {
             return null;
         }
