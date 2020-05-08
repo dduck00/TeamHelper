@@ -14,7 +14,6 @@ public class JwtToken {
 
     private final String KEY = "DUCK";
     private final String SECRET_KEY;
-    private final long TokenValidTime = 30 * 60 * 100L;
 
     JwtToken() {
         SECRET_KEY = Base64.getEncoder().encodeToString(KEY.getBytes());

@@ -1,6 +1,7 @@
 package com.teamhelper.auth.controller;
 
 import com.teamhelper.auth.dto.User;
+import com.teamhelper.auth.jwt.JwtToken;
 import com.teamhelper.auth.service.UserManageService;
 import com.teamhelper.auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +13,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 @RestController
-@RequestMapping("/auth/")
+@RequestMapping("/")
 public class UserRestController {
 
     private final UserService userService;
     private final UserManageService userManageService;
+    private final JwtToken jwtToken;
 
     @Autowired
-    UserRestController(UserService userService, UserManageService userManageService){
+    UserRestController(UserService userService, UserManageService userManageService, JwtToken jwtToken){
         this.userService = userService;
         this.userManageService = userManageService;
+        this.jwtToken = jwtToken;
     }
 
     @GetMapping("/checkIdDuplicate/{checkId}")
