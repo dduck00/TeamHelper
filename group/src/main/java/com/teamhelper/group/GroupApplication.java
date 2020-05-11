@@ -1,18 +1,23 @@
 package com.teamhelper.group;
 
+import com.teamhelper.group.dao.GroupRepository;
+import com.teamhelper.group.dto.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootApplication
 public class GroupApplication implements CommandLineRunner {
 
-    private final CustomerRepository customerRepository;
+    private final GroupRepository groupRepository;
 
     @Autowired
-    GroupApplication(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    GroupApplication(GroupRepository groupRepository) {
+        this.groupRepository = groupRepository;
     }
 
     public static void main(String[] args) {
@@ -22,17 +27,25 @@ public class GroupApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        customerRepository.deleteAll();
+        groupRepository.deleteAll();
+        List<String> list = new ArrayList<>();
+        list.add("EE");
+        list.add("QQ");
+        groupRepository.save(new Group("DDD", list));
 
-        customerRepository.save(new Customer("ALICE", "SMITH"));
-        customerRepository.save(new Customer("Lee", "DUCK"));
+        List<String> list1 = new ArrayList<>();
+        list1.add("EE");
+        list1.add("QzzQ");
+        Group gro = groupRepository.save(new Group("zz", list1));
 
-        for (Customer customer : customerRepository.findAll()) {
-            System.out.println(customer);
+        System.out.println(gro);
+
+        gro.users.add("EE");
+        groupRepository.save(gro);
+
+        for(Group group : groupRepository.findAll()){
+            System.out.println(group);
         }
-        System.out.println();
-
-        System.out.println(customerRepository.findByFirstName("Alice"));
 
     }
 }
