@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface GroupRepository extends MongoRepository<Group, String> {
     public List<Group> findGroupsByUsersContains(String uid);
+    public List<Group> findByNameLike(String name);
+    public List<Group> findAllByOrderByGid();
+    public boolean existsByName(String name);
 }

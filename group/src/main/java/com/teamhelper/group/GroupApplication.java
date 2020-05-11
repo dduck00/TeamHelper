@@ -27,25 +27,7 @@ public class GroupApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        groupRepository.deleteAll();
-        List<String> list = new ArrayList<>();
-        list.add("EE");
-        list.add("QQ");
-        groupRepository.save(new Group("DDD", list));
 
-        List<String> list1 = new ArrayList<>();
-        list1.add("EE");
-        list1.add("QzzQ");
-        Group gro = groupRepository.save(new Group("zz", list1));
-
-        System.out.println(gro);
-
-        gro.users.add("EE");
-        groupRepository.save(gro);
-
-        for(Group group : groupRepository.findAll()){
-            System.out.println(group);
-        }
 
     }
 }
