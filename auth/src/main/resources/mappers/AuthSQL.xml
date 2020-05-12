@@ -5,6 +5,7 @@
 
     <select id="selectUserByIdPw" parameterType="map" resultType="User">
 		SELECT
+			uid			AS uid,
 			user_id 	AS userId,
 			password 	AS password,
 			user_name 	AS userName
@@ -15,29 +16,21 @@
 			AND	password = #{pw}
 	</select>
 
-	<insert id="insertUser" parameterType="map">
+    <insert id="insertUser" parameterType="map">
 		INSERT INTO
 			user(
+				uid,
 				user_id,
 				password,
 				user_name)
 		VALUES (
+			#{uid},
 			#{userId},
 			#{password},
 			#{userName})
 	</insert>
 
-	<update id="updateUser" parameterType="map">
-		UPDATE
-			user
-		SET
-			password = #{password} AND
-			userName=#{userName}
-		WHERE
-			user_id = #{userId}
-	</update>
-
-	<select id="selectExistId" parameterType="map" resultType="_int">
+    <select id="countExistId" parameterType="map" resultType="_int">
 		SELECT
 			COUNT(user_id)
 		FROM

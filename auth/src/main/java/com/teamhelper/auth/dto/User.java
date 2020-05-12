@@ -4,6 +4,7 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("User")
 public class User {
+    private String uid;
     private String userId;
     private String password;
     private String userName;
@@ -14,7 +15,16 @@ public class User {
         this.userName = userName;
     }
 
-    public User(){
+    public User() {
+    }
+
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getUserId() {
@@ -41,4 +51,13 @@ public class User {
         this.userName = userName;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "uid='" + uid + '\'' +
+                ", userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                ", userName='" + userName + '\'' +
+                '}';
+    }
 }

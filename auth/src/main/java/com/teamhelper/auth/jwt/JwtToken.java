@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class JwtToken {
@@ -19,13 +18,13 @@ public class JwtToken {
 
     JwtToken() {
         SECRET_KEY = Base64.getEncoder().encodeToString(KEY.getBytes());
-        System.out.println(SECRET_KEY);
     }
 
-    public String getToken(User user){
-        String id = user.getUserId();
+    public String getToken(User user) {
+        String uid = user.getUid();
+        String loginId = user.getUserId();
         String name = user.getUserName();
-        return createToken(id+"/"+name);
+        return createToken(uid + "/" + name);
     }
 
 
