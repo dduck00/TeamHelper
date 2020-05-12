@@ -10,8 +10,6 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 
-import java.util.Map;
-
 @SpringBootApplication
 @EnableEurekaClient
 @EnableDiscoveryClient
@@ -31,7 +29,6 @@ public class ZuulApplication {
 
     private final JwtToken JWT_TOKEN;
 
-
     public static void main(String[] args) {
         SpringApplication.run(ZuulApplication.class, args);
     }
@@ -43,19 +40,13 @@ public class ZuulApplication {
 
     @Bean
     public RouteLocator myRoutes(RouteLocatorBuilder builder) {
+
         return builder.routes()
                 .route(p -> p
                         .path("/**")
-                        .filters(f -> f.rewritePath("^\\/[0-9a-zA-Z\\/]*$", "/"))
+                        .filters(f -> f.rewritePath("^\\/[0-9a-zA-Z\\/]*$", "/login"))
                         .uri("lb://AUTH-SERVICE")
-                        .predicate(pre -> {
-                            Map<String, String> token = JWT_TOKEN.parseHeader(pre.getRequest());
-                            if (token == null) {
-                                return true;
-                            }
-                            pre.getRequest().getHeaders().setAll(token);
-                            return false;
-                        }))
+                        .predicate(pre -> JWT_TOKEN.hasValidJwtToken(pre.getRequest().getHeaders())))
                 .route(p -> p
                         .path("/api/auth/**")
                         .uri("lb://AUTH-SERVICE"))
@@ -67,5 +58,4 @@ public class ZuulApplication {
                         .uri("lb://RESOURCE-SERVICE"))
                 .build();
     }
-
 }

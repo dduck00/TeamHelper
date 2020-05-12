@@ -50,14 +50,4 @@ public class User {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "uid='" + uid + '\'' +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", userName='" + userName + '\'' +
-                '}';
-    }
 }

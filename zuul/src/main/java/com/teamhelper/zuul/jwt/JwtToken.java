@@ -1,57 +1,65 @@
 package com.teamhelper.zuul.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtToken {
 
     private final String KEY = "DUCK";
     private final String SECRET_KEY;
+    private final ObjectMapper objectMapper;
 
     JwtToken() {
         SECRET_KEY = Base64.getEncoder().encodeToString(KEY.getBytes());
-        System.out.println(SECRET_KEY);
+        objectMapper = new ObjectMapper();
     }
 
-    public Map<String, String> parseHeader(ServerHttpRequest request) {
-        String token = resolveToken(request);
+    public boolean hasValidJwtToken(HttpHeaders headers) {
+        String token = resolveToken(headers);
+        Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        if (StringUtils.isEmpty(token)
+                || validateToken(claims) == false) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean setHeader(HttpHeaders headers) {
+        String token = resolveToken(headers);
+        Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
 
         if (StringUtils.isEmpty(token)
-                || validateToken(token) == false) {
-            return null;
+                || validateToken(claims) == false) {
+            return false;
         }
-        Map<String, String> user = new HashMap<>();
 
-        System.out.println(token);
-        String[] userInfos = getUserPk(token).split("/");
 
-        user.put("USER_CODE", userInfos[0]);
-        user.put("ID", userInfos[1]);
+        headers.add("JWT-UID", claims.get("uid").toString());
+        headers.add("JWT-USER-NAME", claims.get("userName").toString());
+        headers.add("JWT-USER-ID", claims.get("userId").toString());
 
-        return user;
+        System.out.println(headers);
+        return true;
     }
 
-    private String getUserPk(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    private String resolveToken(ServerHttpRequest request) {
-        List<String> header = request.getHeaders().get("X-AUTH-TOKEN");
+    private String resolveToken(HttpHeaders headers) {
+        List<String> header = headers.get("X-AUTH-TOKEN");
         if (header == null)
             return null;
         return header.get(0);
     }
 
-    private boolean validateToken(String token) {
-        Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
-        return !claims.getBody().getExpiration().before(new Date());
+    private boolean validateToken(Claims claims) {
+        return !claims.getExpiration().before(new Date());
     }
 
 
