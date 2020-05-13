@@ -46,9 +46,10 @@ public class ZuulApplication {
                         .path("/**")
                         .filters(f -> f.rewritePath("^\\/[0-9a-zA-Z\\/]*$", "/login"))
                         .uri("lb://AUTH-SERVICE")
-                        .predicate(pre -> JWT_TOKEN.hasValidJwtToken(pre.getRequest().getHeaders())))
+                        .predicate(pre -> JWT_TOKEN.hasValidJwtToken(pre.getRequest().getHeaders()) == false))
                 .route(p -> p
                         .path("/api/auth/**")
+                        .filters(f -> f.rewritePath("/api/auth/(?<segment>.*)", "/${segment}"))
                         .uri("lb://AUTH-SERVICE"))
                 .route(p -> p
                         .path(webSocketUris)

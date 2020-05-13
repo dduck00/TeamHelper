@@ -2,6 +2,8 @@ package com.teamhelper.zuul.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpHeaders;
@@ -18,18 +20,22 @@ public class JwtToken {
     private final String SECRET_KEY;
     private final ObjectMapper objectMapper;
 
-    JwtToken() {
+    public JwtToken() {
         SECRET_KEY = Base64.getEncoder().encodeToString(KEY.getBytes());
         objectMapper = new ObjectMapper();
     }
 
     public boolean hasValidJwtToken(HttpHeaders headers) {
-        String token = resolveToken(headers);
-        Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-        if (StringUtils.isEmpty(token)
-                || validateToken(claims) == false) {
+        try {
+            String token = StringUtils.defaultIfEmpty(resolveToken(headers), "");
+            Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+            if (validateToken(claims) == false) {
+                throw new JwtException("Time Expired");
+            }
+        } catch (Exception e) {
             return false;
         }
+
         return true;
     }
 
@@ -61,6 +67,4 @@ public class JwtToken {
     private boolean validateToken(Claims claims) {
         return !claims.getExpiration().before(new Date());
     }
-
-
 }
