@@ -1,8 +1,6 @@
 package com.teamhelper.zuul.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang.StringUtils;
@@ -17,12 +15,11 @@ import java.util.List;
 public class JwtToken {
 
     private final String KEY = "DUCK";
+
     private final String SECRET_KEY;
-    private final ObjectMapper objectMapper;
 
     public JwtToken() {
         SECRET_KEY = Base64.getEncoder().encodeToString(KEY.getBytes());
-        objectMapper = new ObjectMapper();
     }
 
     public boolean hasValidJwtToken(HttpHeaders headers) {
@@ -35,7 +32,6 @@ public class JwtToken {
         } catch (Exception e) {
             return false;
         }
-
         return true;
     }
 
@@ -48,20 +44,18 @@ public class JwtToken {
             return false;
         }
 
-
         headers.add("JWT-UID", claims.get("uid").toString());
         headers.add("JWT-USER-NAME", claims.get("userName").toString());
         headers.add("JWT-USER-ID", claims.get("userId").toString());
 
-        System.out.println(headers);
         return true;
     }
 
     private String resolveToken(HttpHeaders headers) {
-        List<String> header = headers.get("X-AUTH-TOKEN");
-        if (header == null)
+        List<String> tokenHeaders = headers.get("X-AUTH-TOKEN");
+        if (tokenHeaders == null)
             return null;
-        return header.get(0);
+        return tokenHeaders.get(0);
     }
 
     private boolean validateToken(Claims claims) {
