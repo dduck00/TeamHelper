@@ -17,35 +17,35 @@ public class GroupController {
         this.groupService = groupService;
     }
 
-    @PostMapping("/make/{groupName}")
+    @PostMapping("/group/{groupName}/user/{uid}")
     public Group makeGroup(@PathVariable String groupName,
-                           @CookieValue("uid") String uid) {
+                           @PathVariable String uid) {
         return groupService.makeGroup(new Group(groupName, uid));
     }
 
-    @PostMapping("/add/{gid}")
+    @PutMapping("/group/{gid}/user/{uid}")
     public Group addGroupMember(@PathVariable String gid,
-                                @CookieValue("uid") String uid) {
+                                @PathVariable String uid) {
         return groupService.addGroupMember(gid, uid);
     }
 
-    @DeleteMapping("/delete/{gid}")
+    @DeleteMapping("/group/{gid}/user/{uid}")
     public Group removeGroupMember(@PathVariable String gid,
-                                   @CookieValue("uid") String uid) {
+                                   @PathVariable String uid) {
         return groupService.removeGroupMember(gid, uid);
     }
 
-    @GetMapping("/get")
+    @GetMapping("/groups")
     public List<Group> getGroups() {
         return groupService.getGroups();
     }
 
-    @GetMapping("/get/name/{groupName}")
+    @GetMapping("/group/{groupName}")
     public List<Group> getGroupsByName(@PathVariable String groupName) {
         return groupService.getGroupsByName(groupName);
     }
 
-    @GetMapping("/get/user/{uid}")
+    @GetMapping("/user/{uid}/groups")
     public List<Group> getGroupsContainUser(@PathVariable String uid) {
         return groupService.getGroupsContainUser(uid);
     }

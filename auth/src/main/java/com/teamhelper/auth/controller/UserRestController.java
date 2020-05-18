@@ -9,9 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-
 @RestController
 public class UserRestController {
 
@@ -24,20 +21,19 @@ public class UserRestController {
         this.jwtToken = jwtToken;
     }
 
-    @GetMapping("/checkIdDuplicate/{checkId}")
+    @GetMapping("/check/{checkId}")
     public boolean checkIdDuplicate(@PathVariable String checkId) {
         return userService.isIdExist(checkId) == false;
     }
 
-    @PostMapping("/signUp")
+    @PostMapping("/user")
     public void signUp(User user) {
         userService.signUp(user);
     }
 
     @GetMapping("/login/{id}/{pw}")
-    public String login(HttpServletResponse httpServletResponse,
-                        @PathVariable String id,
-                        @PathVariable String pw) throws IllegalAccessException, UnsupportedEncodingException {
+    public String login(@PathVariable String id,
+                        @PathVariable String pw) throws IllegalAccessException {
 
         User user = userService.login(id, pw);
 
